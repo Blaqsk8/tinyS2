@@ -11,7 +11,6 @@ from adafruit_seesaw.seesaw import Seesaw
 
 # MQTT Topic Setup
 PUBLISH_DELAY = 60
-MQTT_TOPIC = "state/soil_node_01"
 USE_DEEP_SLEEP = True
 
 # moisture sensor setup
@@ -51,8 +50,8 @@ while True:
     soil_temp = (temp * 1.8) + 32
     
     print("Publishing to %s" % MQTT_TOPIC)
-    mqtt_client.publish(MQTT_TOPIC, soil_moisture)
-    mqtt_client.publish(MQTT_TOPIC, soil_temp)
+    mqtt_client.publish("node_01/moisture", soil_moisture)
+    mqtt_client.publish("node_01/temp", soil_temp)
     
     if USE_DEEP_SLEEP:
         mqtt_client.disconnect()
