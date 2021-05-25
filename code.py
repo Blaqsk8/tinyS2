@@ -11,7 +11,7 @@ from adafruit_seesaw.seesaw import Seesaw
 
 # MQTT Topic Setup
 PUBLISH_DELAY = 60
-MQTT_TOPIC = "state/moisture_node_01"
+MQTT_TOPIC = "state/soil_node_01"
 USE_DEEP_SLEEP = True
 
 # moisture sensor setup
