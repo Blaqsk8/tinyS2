@@ -1,21 +1,18 @@
 import alarm
 import board
 import time
-import digialio
+import digitalio
 import neopixel
 import ssl
 import socketpool
 import wifi
 import adafruit_minimqtt.adafruit_minimqtt as MQTT
 from adafruit_seesaw.seesaw import Seesaw
+from digitalio import DigitalInOut, Direction, Pull
 
-# MQTT Topic Setup
-PUBLISH_DELAY = 60
-USE_DEEP_SLEEP = True
-
-# moisture sensor setup
-i2c_bus = board.I2C()
-moisture_sensor = Seesaw(i2c_bus, addr=0x36)
+switch = DigitalInOut(board.D19)
+switch.direction = Direction.INPUT
+switch.pull = Pull.UP
 
 # import secrets to initalize sensitive services
 try:
@@ -44,24 +41,17 @@ print("Attempting to connect to %s" % mqtt_client.broker)
 mqtt_client.connect()
 
 while True:
-    # take soil sensor readings
-    soil_moisture = ss.moisture_read()
-    temp = ss.get_temp()
-    soil_temp = (temp * 1.8) + 32
-    
+    MQTT_TOPIC = "node_01/beam"
+    beam = True
+    if switch.value:
+        beam = False
+    print(beam)
     print("Publishing to %s" % MQTT_TOPIC)
-    mqtt_client.publish("node_01/moisture", soil_moisture)
-    mqtt_client.publish("node_01/temp", soil_temp)
+    # mqtt_client.publish("node_01/moisture", soil_moisture)
+    # mqtt_client.publish("node_01/temp", soil_temp)
+    mqtt_client.publish("node_01/beam", str(beam))
     
-    if USE_DEEP_SLEEP:
-        mqtt_client.disconnect()
-        pause = alarm.time.TimeAlarm(monotonic_time=timemonotonic() + PUBLISH_DELAY)
-        alarm.exit_and_deep_sleep_until_alarms(pause)
-    else:
-        last_update = time_monotonic()
-        while time.monotonic() < last_update + PUBLISH_DELAY:
-            mqtt_client.loop()
-
+    time.sleep(2)
 
     
 
