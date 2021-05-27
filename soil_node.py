@@ -10,9 +10,16 @@ import adafruit_minimqtt.adafruit_minimqtt as MQTT
 from adafruit_seesaw.seesaw import Seesaw
 from digitalio import DigitalInOut, Direction, Pull
 
+# I2C Bus setup
+i2c_bus = board.I2C()
+
+# IR Beam Break Switch Setup
 switch = DigitalInOut(board.D19)
 switch.direction = Direction.INPUT
 switch.pull = Pull.UP
+
+# SeeSaw Soil Moisture Sensor
+# node_sensor = Seesaw(i2c_bus, addr=0x36)
 
 # import secrets to initalize sensitive services
 try:
@@ -45,9 +52,12 @@ while True:
     beam = True
     if switch.value:
         beam = False
+    # moisture_reading = node_sensor.moisture_read()
+    # temperature = node_sensor.get_temp()
+    # soil_temp = (temperature * 1.8) + 32
     print(beam)
     print("Publishing to %s" % MQTT_TOPIC)
-    # mqtt_client.publish("node_01/moisture", soil_moisture)
+    # mqtt_client.publish("node_01/moisture", moisture_reading)
     # mqtt_client.publish("node_01/temp", soil_temp)
     mqtt_client.publish("node_01/beam", str(beam))
     
